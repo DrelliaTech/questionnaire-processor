@@ -1,0 +1,17 @@
+{
+  "name": "questionnaire-processor-deployment",
+  "version": "1.0.0",
+  "description": "Deployment configuration for questionnaire processor",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:dev": "STAGE=dev serverless deploy",
+    "deploy:prod": "STAGE=prod serverless deploy",
+    "remove": "serverless remove",
+    "logs": "serverless logs -f",
+    "info": "serverless info"
+  },
+  "devDependencies": {
+    "serverless": "^3.28.0",
+    "serverless-python-requirements": "^6.0.0"
+  }
+}
