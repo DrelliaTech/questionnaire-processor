@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "drellia-utils"
+version = "0.1.0"
+description = "Shared utilities for Drellia Audit services"
+authors = ["Drellia Team"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "^1.28.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,61 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'aws/**'
+      - '.github/workflows/deploy-infrastructure.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'DEV'
+        type: choice
+        options:
+          - DEV
+          - PROD
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'PROD' || 'DEV') }}
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+    
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-north-1
+    
+    - name: Install dependencies
+      run: |
+        cd aws
+        pip install -r requirements.txt
+    
+    - name: Deploy Infrastructure
+      run: |
+        cd aws
+        ENVIRONMENT=${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'PROD' || 'DEV') }}
+        cdk deploy DrelliaAudit-$ENVIRONMENT \
+          --context environment=$ENVIRONMENT \
+          --require-approval never

@@ -1,0 +1,62 @@
+name: Deploy Questionnaire Processor
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/questionnaire-processor/**'
+      - 'shared/**'
+      - '.github/workflows/deploy-questionnaire-processor.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'DEV'
+        type: choice
+        options:
+          - DEV
+          - PROD
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'PROD' || 'DEV') }}
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-north-1
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      with:
+        registry-type: private
+        registries: "151508346231"
+    
+    - name: Build and push Docker image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ENVIRONMENT: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'PROD' || 'DEV') }}
+      run: |
+        # Copy shared packages
+        cp -r shared services/questionnaire-processor/
+        
+        # Build and push
+        docker build -t questionnaire-processor:latest services/questionnaire-processor
+        docker tag questionnaire-processor:latest $ECR_REGISTRY/drellia-audit/questionnaire-processor-${ENVIRONMENT,,}:latest
+        docker push $ECR_REGISTRY/drellia-audit/questionnaire-processor-${ENVIRONMENT,,}:latest
+        
+        # Update Lambda function
+        aws lambda update-function-code \
+          --function-name QuestionnaireProcessor-${ENVIRONMENT} \
+          --image-uri $ECR_REGISTRY/drellia-audit/questionnaire-processor-${ENVIRONMENT,,}:latest \
+          --region eu-north-1

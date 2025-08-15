@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "questionnaire-processor"
+version = "0.1.0"
+description = "Service to process questionnaires against conversations"
+authors = ["Drellia Team"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "^1.28.0"
+psycopg2-binary = "^2.9.7"
+sqlalchemy = "^2.0.0"
+openai = "^1.0.0"
+drellia-models = {path = "../../shared/models", develop = true}
+drellia-database = {path = "../../shared/database", develop = true}
+drellia-utils = {path = "../../shared/utils", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+moto = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

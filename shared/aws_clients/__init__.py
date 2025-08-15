@@ -1,3 +1,0 @@
-"""
-AWS client utilities
-"""

@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "audio-transcriber"
+version = "0.1.0"
+description = "Fargate service to transcribe audio files using AWS Transcribe"
+authors = ["Drellia Team"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "^1.28.0"
+openai-whisper = "^20230918"
+drellia-models = {path = "../../shared/models", develop = true}
+drellia-utils = {path = "../../shared/utils", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+moto = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
