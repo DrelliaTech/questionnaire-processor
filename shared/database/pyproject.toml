@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "drellia-database"
+version = "0.1.0"
+description = "Shared database utilities for Drellia Audit services"
+authors = ["Drellia Team"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "^1.28.0"
+psycopg2-binary = "^2.9.7"
+sqlalchemy = "^2.0.0"
+drellia-models = {path = "../models", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

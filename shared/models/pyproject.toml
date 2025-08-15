@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "drellia-models"
+version = "0.1.0"
+description = "Shared data models for Drellia Audit services"
+authors = ["Drellia Team"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.0.0"
+sqlalchemy = "^2.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
